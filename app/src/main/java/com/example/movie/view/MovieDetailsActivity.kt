@@ -20,6 +20,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     private fun initialize(){
         setContentView(binding.root)
 
+
         val movie = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
            intent?.getParcelableExtra("movie", Movie::class.java)
         } else {

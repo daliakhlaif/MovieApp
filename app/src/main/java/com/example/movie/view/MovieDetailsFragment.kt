@@ -2,6 +2,7 @@ package com.example.movie.view
 
 import android.content.Intent
 import android.os.Build
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,12 +34,14 @@ class MovieDetailsFragment : Fragment() {
           initialize()
     }
 
+
     private fun initialize() {
         arguments?.let { args ->
             val movie: Movie? = getMovieFromIntent(args)
             movie?.let { displayMovieDetails(it) }
         }
     }
+
 
     private fun getMovieFromIntent(args: Bundle): Movie? {
         val intent: Intent? = activity?.intent
@@ -52,6 +55,7 @@ class MovieDetailsFragment : Fragment() {
             Parcels.unwrap(args.getParcelable(ARG_MOVIE))
         }
     }
+
     private fun displayMovieDetails(movie: Movie) {
         binding.apply {
             movieName.text = movie.name
@@ -86,6 +90,7 @@ class MovieDetailsFragment : Fragment() {
             return MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_MOVIE, movie)
+
                 }
             }
         }
