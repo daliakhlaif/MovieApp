@@ -1,0 +1,12 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/typeView"
+    android:layout_width="84dp"
+    android:layout_height="23dp"
+    android:textStyle="bold"
+    android:textAllCaps="true"
+    android:gravity="center"
+    android:textColor="@color/purple_100"
+    android:paddingLeft="3dp"
+    android:paddingRight="3dp"
+    android:layout_marginEnd="8dp"
+    android:background="@drawable/rounded_background" />
