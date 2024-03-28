@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">MRMovie</string>
+    <string name="poster_desc">movie poster image</string>
+    <string name="clockIcon">icon for clock</string>
+    <string name="starIcon">icon for star</string>
+    <string name="movie1">Venom Let There Be Carnage</string>
+    <string name="movie2">Spiderman : No Way Home</string>
+    <string name="movie3">Jumanji: The Next Level</string>
+    <string name="movie1desc" id="mv1desc">Eddie Brock attempts to reignite his career by interviewing serial killer Cletus Kasady, who becomes the host of the symbiote Carnage and escapes prison after a failed execution.</string>
+    <string name="movie2desc" id="mv2desc">With Spider-Man\'s identity now revealed, Peter asks Doctor Strange for help. When a spell goes wrong, dangerous foes from other worlds start to appear, forcing Peter to discover what it truly means to be Spider-Man.</string>
+    <string name="movie3desc">In Jumanji: The Next Level, the gang is back but the game has changed. As they return to rescue one of their own, the players will have to brave parts unknown from arid deserts to snowy mountains, to escape the world\'s most dangerous game.</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="outOfTen">%1$s /10</string>
+    <string name="lang">Language</string>
+    <string name="length">length</string>
+    <string name="Arrow">Back Arrow</string>
+    <string name="bookmark">Bookmark Icon</string>
+    <string name="description">Description</string>
+</resources>
