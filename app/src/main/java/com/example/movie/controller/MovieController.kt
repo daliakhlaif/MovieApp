@@ -1,13 +1,15 @@
 package com.example.movie.controller
 
+import com.example.movie.model.Image
 import com.example.movie.model.Movie
+import com.example.movie.model.Rating
 
 class MovieController {
 
     private val moviesList: ArrayList<Movie> = ArrayList()
 
 
-    fun addMovie(name: String, type: List<String>, rating: Double, poster: Int, duration: Int, language: String, description: String) {
+    fun addMovie(name: String, type: List<String>, rating: Rating, poster: Image, duration: Int, language: String, description: String) {
         val movie = Movie(name, type, rating, poster, duration, language, description)
         moviesList.add(movie)
     }

@@ -29,11 +29,11 @@ class MovieListAdapter (private val context: Context, private val moviesList: Ar
         fun bind(context: Context, movie: Movie, listener: OnMovieItemClickListener?) {
 
             binding.movieTitle.text = movie.name
-            binding.ratingView.text = context.getString(R.string.outOfTen, movie.rating.toString())
+            binding.ratingView.text = context.getString(R.string.outOfTen, movie.rating.average.toString())
             binding.durationView.text = MovieController.getDurationString(movie.duration)
 
             Glide.with(context)
-                .load(movie.poster)
+                .load(movie.poster.original)
                 .apply( RequestOptions().transform(RoundedCorners(15)))
                 .into(binding.imageView)
 

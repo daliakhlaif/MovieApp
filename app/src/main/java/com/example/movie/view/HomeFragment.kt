@@ -77,7 +77,6 @@ class HomeFragment : Fragment(), OnMovieItemClickListener {
                             moviesList.add(movie)
                             Log.i(tag, "onResponse: $movie")
                         }
-
                     }
                 }
 

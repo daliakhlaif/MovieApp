@@ -60,13 +60,13 @@ class MovieDetailsFragment : Fragment() {
     private fun displayMovieDetails(movie: Movie) {
         binding.apply {
             movieName.text = movie.name
-            rating.text = getString(R.string.outOfTen, movie.rating.toString())
+            rating.text = getString(R.string.outOfTen, movie.rating.average.toString())
             language.text = movie.language
             length.text = MovieController.getDurationString(movie.duration)
             description.text = movie.description
 
             Glide.with(requireContext())
-                .load(movie.poster)
+                .load(movie.poster.original)
                 .into(imageView2)
 
             imageButton.setOnClickListener {
