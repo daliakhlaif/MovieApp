@@ -7,8 +7,8 @@ class MovieController {
     private val moviesList: ArrayList<Movie> = ArrayList()
 
 
-    fun addMovie(name: String, type: List<String>, rating: Double, posterResId: Int, duration: Int, language: String, description: String) {
-        val movie = Movie(name, type, rating, posterResId, duration, language, description)
+    fun addMovie(name: String, type: List<String>, rating: Double, poster: Int, duration: Int, language: String, description: String) {
+        val movie = Movie(name, type, rating, poster, duration, language, description)
         moviesList.add(movie)
     }
 

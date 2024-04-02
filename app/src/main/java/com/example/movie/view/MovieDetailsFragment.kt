@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.movie.R
 import com.example.movie.controller.MovieController
 import com.example.movie.databinding.FragmentMovieDetailsBinding
@@ -63,12 +64,14 @@ class MovieDetailsFragment : Fragment() {
             language.text = movie.language
             length.text = MovieController.getDurationString(movie.duration)
             description.text = movie.description
-            imageView2.setImageResource(movie.posterResId)
+
+            Glide.with(requireContext())
+                .load(movie.poster)
+                .into(imageView2)
 
             imageButton.setOnClickListener {
                 activity?.finish()
             }
-
             linearForType.removeAllViews()
             movie.type.forEach { type ->
                 val typeView = layoutInflater.inflate(R.layout.type_view, linearForType, false) as TextView

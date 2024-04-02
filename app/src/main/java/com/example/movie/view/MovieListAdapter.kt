@@ -14,8 +14,7 @@ import com.example.movie.databinding.MovieListItemBinding
 import com.example.movie.model.Movie
 
 
-
-class MovieListAdapter (private val context: Context, private val moviesList:ArrayList<Movie>)
+class MovieListAdapter (private val context: Context, private val moviesList: ArrayList<Movie>)
     :  RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>(){
 
     private var onMovieItemClickListener: OnMovieItemClickListener? = null
@@ -27,14 +26,14 @@ class MovieListAdapter (private val context: Context, private val moviesList:Arr
     class MovieViewHolder(private val binding: MovieListItemBinding)
         : RecyclerView.ViewHolder(binding.root){
 
-        fun bind(context: Context, movie: Movie,  listener: OnMovieItemClickListener?) {
+        fun bind(context: Context, movie: Movie, listener: OnMovieItemClickListener?) {
 
             binding.movieTitle.text = movie.name
             binding.ratingView.text = context.getString(R.string.outOfTen, movie.rating.toString())
             binding.durationView.text = MovieController.getDurationString(movie.duration)
 
             Glide.with(context)
-                .load(movie.posterResId)
+                .load(movie.poster)
                 .apply( RequestOptions().transform(RoundedCorners(15)))
                 .into(binding.imageView)
 

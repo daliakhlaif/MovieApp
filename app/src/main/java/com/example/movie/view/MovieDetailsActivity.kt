@@ -14,12 +14,11 @@ class MovieDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         initialize()
     }
 
     private fun initialize(){
-        setContentView(binding.root)
-
 
         val movie = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
            intent?.getParcelableExtra("movie", Movie::class.java)

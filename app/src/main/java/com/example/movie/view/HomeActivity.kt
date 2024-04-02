@@ -4,7 +4,6 @@ package com.example.movie.view
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.example.movie.R
 import com.example.movie.databinding.ActivityHomeBinding
 import com.google.android.material.navigation.NavigationBarView
 
@@ -19,7 +18,6 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
         initialize()
 
-
     }
 
     private fun replaceFragment(homeFragment: Fragment) {
@@ -29,7 +27,10 @@ class HomeActivity : AppCompatActivity() {
         fragmentTransaction.commit()
     }
 
+
     private fun initialize(){
+
+
         val bottomNavigationView = binding.bottomNavigationView
         bottomNavigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED
         bottomNavigationView.itemIconTintList = null
