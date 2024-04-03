@@ -1,10 +1,10 @@
 package com.example.movie.view
 
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.movie.databinding.ActivityMovieDetailsBinding
 import com.example.movie.model.Movie
+import com.example.movie.util.getParcelableExtraCompat
 
 
 class MovieDetailsActivity : AppCompatActivity() {
@@ -20,14 +20,9 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private fun initialize(){
 
-        val movie = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-           intent?.getParcelableExtra("movie", Movie::class.java)
-        } else {
-            intent.getParcelableExtra<Movie>("movie")
-        }
-
-        if (movie != null){     //launch movie details fragment
-            val movieDetailsFragment = MovieDetailsFragment.newInstance(movie)
+        val movie =  intent.getParcelableExtraCompat<Movie>("movie")
+        movie?.let {
+            val movieDetailsFragment = MovieDetailsFragment.newInstance(it)
             supportFragmentManager.beginTransaction()
                 .replace(binding.fragmentContainer.id, movieDetailsFragment)
                 .commit()

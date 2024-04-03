@@ -20,24 +20,23 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
-    private fun replaceFragment(homeFragment: Fragment) {
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(binding.frameLayout.id, homeFragment)
-        fragmentTransaction.commit()
+    private fun initialize(){
+        setupBottomNavigationView()
+        replaceFragment(HomeFragment())
     }
 
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(binding.frameLayout.id, fragment)
+            .commit()
+    }
 
-    private fun initialize(){
-
-
-        val bottomNavigationView = binding.bottomNavigationView
-        bottomNavigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED
-        bottomNavigationView.itemIconTintList = null
-        bottomNavigationView.setOnItemSelectedListener { item ->
-               true
+    private fun setupBottomNavigationView() {
+        binding.bottomNavigationView.apply {
+            labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED
+            itemIconTintList = null
+            setOnItemSelectedListener { true }
         }
-        replaceFragment(HomeFragment())
     }
 
 }

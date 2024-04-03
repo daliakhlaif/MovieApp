@@ -14,14 +14,12 @@ import com.example.movie.databinding.MovieListItemBinding
 import com.example.movie.model.Movie
 
 
-class MovieListAdapter (private val context: Context, private val moviesList: ArrayList<Movie>)
+class MovieListAdapter (
+    private val context: Context,
+    private val moviesList: ArrayList<Movie>,
+    private val onMovieItemClickListener: OnMovieItemClickListener)
     :  RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>(){
 
-    private var onMovieItemClickListener: OnMovieItemClickListener? = null
-
-    fun setOnMovieItemClickListener(listener: OnMovieItemClickListener) {
-        this.onMovieItemClickListener = listener
-    }
 
     class MovieViewHolder(private val binding: MovieListItemBinding)
         : RecyclerView.ViewHolder(binding.root){

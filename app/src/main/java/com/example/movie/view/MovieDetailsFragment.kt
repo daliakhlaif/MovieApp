@@ -1,9 +1,8 @@
 package com.example.movie.view
 
 import android.content.Intent
-import android.os.Build
-
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,7 @@ import com.example.movie.R
 import com.example.movie.controller.MovieController
 import com.example.movie.databinding.FragmentMovieDetailsBinding
 import com.example.movie.model.Movie
-import org.parceler.Parcels
+import com.example.movie.util.getParcelableExtraCompat
 
 class MovieDetailsFragment : Fragment() {
 
@@ -31,30 +30,21 @@ class MovieDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-          initialize()
+        initialize()
     }
 
 
     private fun initialize() {
-        arguments?.let { args ->
-            val movie: Movie? = getMovieFromIntent(args)
+        arguments?.let {
+            val movie: Movie? = getMovieFromIntent()
             movie?.let { displayMovieDetails(it) }
         }
     }
 
 
-    private fun getMovieFromIntent(args: Bundle): Movie? {
+    private fun getMovieFromIntent(): Movie? {
         val intent: Intent? = activity?.intent
-        return if (intent != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getParcelableExtra("movie", Movie::class.java)
-            } else {
-                intent.getParcelableExtra<Movie>("movie")
-            }
-        } else {
-            Parcels.unwrap(args.getParcelable(ARG_MOVIE))
-        }
+       return intent?.getParcelableExtraCompat("movie")
     }
 
     private fun displayMovieDetails(movie: Movie) {
@@ -63,8 +53,8 @@ class MovieDetailsFragment : Fragment() {
             rating.text = getString(R.string.outOfTen, movie.rating.average.toString())
             language.text = movie.language
             length.text = MovieController.getDurationString(movie.duration)
-            description.text = movie.description
-
+            description.text = MovieController.removeHtmlTags(movie.description)
+            description.movementMethod = ScrollingMovementMethod()
             Glide.with(requireContext())
                 .load(movie.poster.original)
                 .into(imageView2)
@@ -72,6 +62,7 @@ class MovieDetailsFragment : Fragment() {
             imageButton.setOnClickListener {
                 activity?.finish()
             }
+
             linearForType.removeAllViews()
             movie.type.forEach { type ->
                 val typeView = layoutInflater.inflate(R.layout.type_view, linearForType, false) as TextView
@@ -93,7 +84,6 @@ class MovieDetailsFragment : Fragment() {
             return MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_MOVIE, movie)
-
                 }
             }
         }
