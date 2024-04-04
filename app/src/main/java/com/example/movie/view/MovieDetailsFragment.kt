@@ -44,7 +44,7 @@ class MovieDetailsFragment : Fragment() {
 
     private fun getMovieFromIntent(): Movie? {
         val intent: Intent? = activity?.intent
-       return intent?.getParcelableExtraCompat("movie")
+       return intent?.getParcelableExtraCompat("movie", Movie::class.java)
     }
 
     private fun displayMovieDetails(movie: Movie) {

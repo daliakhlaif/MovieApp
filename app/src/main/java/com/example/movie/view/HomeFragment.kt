@@ -12,10 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie.controller.MovieController
 import com.example.movie.databinding.FragmentHomeBinding
 import com.example.movie.model.Movie
-import com.example.movie.network.RetrofitClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class HomeFragment : Fragment(), OnMovieItemClickListener {
 

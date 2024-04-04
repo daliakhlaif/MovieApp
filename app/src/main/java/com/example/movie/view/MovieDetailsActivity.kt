@@ -20,7 +20,7 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private fun initialize(){
 
-        val movie =  intent.getParcelableExtraCompat<Movie>("movie")
+        val movie =  intent.getParcelableExtraCompat<Movie>("movie", Movie::class.java)
         movie?.let {
             val movieDetailsFragment = MovieDetailsFragment.newInstance(it)
             supportFragmentManager.beginTransaction()
