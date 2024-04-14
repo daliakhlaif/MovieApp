@@ -26,6 +26,16 @@
         </activity>
         <activity android:name=".view.MovieDetailsActivity">
         </activity>
+        <receiver
+            android:name=".view.UnBookmarkBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.movie.ACTION_MOVIE_UNBOOKMARKED" />
+            </intent-filter>
+
+        </receiver>
+
     </application>
 
 </manifest>

@@ -1,6 +1,8 @@
 package com.example.movie.view
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
@@ -8,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import com.example.movie.R
 import com.example.movie.controller.MovieController
@@ -15,10 +18,14 @@ import com.example.movie.databinding.FragmentMovieDetailsBinding
 import com.example.movie.model.Movie
 import com.example.movie.util.getParcelableExtraCompat
 
+
 class MovieDetailsFragment : Fragment() {
 
+    private lateinit var sharedPreferences: SharedPreferences
     private var _binding: FragmentMovieDetailsBinding? = null
+    private lateinit var movie: Movie
     private val binding get() = _binding!!
+    private val intent = Intent(BookmarkFragment.ACTION_BOOKMARK_UPDATED)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,16 +42,50 @@ class MovieDetailsFragment : Fragment() {
 
 
     private fun initialize() {
-        arguments?.let {
-            val movie: Movie? = getMovieFromIntent()
-            movie?.let { displayMovieDetails(it) }
+        sharedPreferences = requireContext().getSharedPreferences("BookmarkPrefs", Context.MODE_PRIVATE)
+
+        binding.bookmark.setOnClickListener {
+            toggleBookmark()
         }
+
+        arguments?.let {
+            movie = getMovieFromIntent() ?: return
+            displayMovieDetails(movie)
+            updateBookmarkAppearance(isBookmarked())
+        }
+    }
+
+    private fun isBookmarked(): Boolean {
+        val bookmarkedMovies = sharedPreferences.getStringSet("bookmarkedMovies", emptySet())
+        return bookmarkedMovies?.contains(movie.movieId.toString()) ?: false
+    }
+
+    private fun toggleBookmark() {
+        val isBookmarked = isBookmarked()
+        val newBookmarkState = !isBookmarked
+        saveBookmarkState(newBookmarkState)
+        updateBookmarkAppearance(newBookmarkState)
+        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+    }
+
+    private fun saveBookmarkState(bookmarkState: Boolean) {
+        val bookmarkedMovies = sharedPreferences.getStringSet("bookmarkedMovies", mutableSetOf())?.toMutableSet()
+        if (bookmarkState) {
+            bookmarkedMovies?.add(movie.movieId.toString())
+        } else {
+            bookmarkedMovies?.remove(movie.movieId.toString())
+        }
+        sharedPreferences.edit().putStringSet("bookmarkedMovies", bookmarkedMovies).apply()
+    }
+
+    private fun updateBookmarkAppearance(isBookmarked: Boolean) {
+        val drawableRes = if (isBookmarked) R.drawable.bookmark_pressed else R.drawable.bookmark_default
+        binding.bookmark.setImageResource(drawableRes)
     }
 
 
     private fun getMovieFromIntent(): Movie? {
-        val intent: Intent? = activity?.intent
-       return intent?.getParcelableExtraCompat("movie", Movie::class.java)
+       return activity?.intent?.getParcelableExtraCompat("movie", Movie::class.java)
     }
 
     private fun displayMovieDetails(movie: Movie) {

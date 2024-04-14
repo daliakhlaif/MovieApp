@@ -14,9 +14,12 @@ object MovieController {
         moviesList.addAll(movies)
     }
 
-
     fun getAllMovies(): ArrayList<Movie> {
         return moviesList
+    }
+
+    fun getMovieById(movieId: Int): Movie? {
+        return moviesList.find { it.movieId == movieId }
     }
 
     fun fetchMovies(callback: (ArrayList<Movie>?, Throwable?) -> Unit) {
