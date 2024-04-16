@@ -3,21 +3,23 @@ package com.example.movie.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movie.controller.MovieController
+import com.example.movie.adapter.MovieListAdapter
 import com.example.movie.databinding.FragmentHomeBinding
 import com.example.movie.model.Movie
+import com.example.movie.viewModel.HomeViewModel
 
 class HomeFragment : Fragment(), OnMovieItemClickListener {
 
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewModel: HomeViewModel
     private lateinit var movieListAdapter: MovieListAdapter
 
 
@@ -31,11 +33,14 @@ class HomeFragment : Fragment(), OnMovieItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
         initialize()
     }
 
     private fun initialize(){
-        fetchMovies()
+        viewModel.movies.observe(viewLifecycleOwner) { movies ->
+            displayMovies(movies as ArrayList<Movie>)
+        }
     }
 
 
@@ -47,19 +52,6 @@ class HomeFragment : Fragment(), OnMovieItemClickListener {
         startActivity(intent)
     }
 
-
-    private fun fetchMovies() {
-        MovieController.fetchMovies { movies, error ->
-            if (error != null) {
-                Log.e("CHECK_RESPONSE", "Failed to retrieve movies: ${error.message}")
-            } else {
-                movies?.let {
-                    Log.i("CHECK_RESPONSE", "Movies retrieved successfully: $it")
-                    displayMovies(it)
-                }
-            }
-        }
-    }
 
     private fun displayMovies(movies: ArrayList<Movie>) {
         binding.recycler.layoutManager = LinearLayoutManager(context)

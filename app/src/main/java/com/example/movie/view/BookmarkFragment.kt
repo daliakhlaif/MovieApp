@@ -4,25 +4,25 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movie.controller.MovieController
+import com.example.movie.adapter.BookmarkedListAdapter
 import com.example.movie.databinding.FragmentBookmarkBinding
 import com.example.movie.model.Movie
-
+import com.example.movie.viewModel.BookmarkViewModel
+import com.example.movie.viewModel.BookmarkViewModelFactory
 
 
 class BookmarkFragment : Fragment(), OnMovieItemClickListener {
-
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var bookmarkedListAdapter: BookmarkedListAdapter
     private lateinit var binding: FragmentBookmarkBinding
+    private lateinit var bookmarkedListAdapter: BookmarkedListAdapter
+    private val viewModel: BookmarkViewModel by viewModels { BookmarkViewModelFactory(requireContext()) }
 
     companion object {
         const val ACTION_BOOKMARK_UPDATED = "com.example.movie.BOOKMARK_UPDATED"
@@ -31,7 +31,7 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
     private val bookmarkUpdateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == ACTION_BOOKMARK_UPDATED) {
-                displayBookmarkedMovies()
+                viewModel.fetchBookmarkedMovies()
             }
         }
     }
@@ -47,16 +47,20 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
+        observeBookmarkedMovies()
     }
 
     private fun initialize() {
-        sharedPreferences = requireContext().getSharedPreferences("BookmarkPrefs", Context.MODE_PRIVATE)
         binding.recycler.layoutManager = LinearLayoutManager(requireContext())
-        bookmarkedListAdapter = BookmarkedListAdapter(requireContext(), getBookmarkedMovies(), this)
+        bookmarkedListAdapter = BookmarkedListAdapter(requireContext(), ArrayList(), this)
         binding.recycler.adapter = bookmarkedListAdapter
-        displayBookmarkedMovies()
         registerBroadcastReceiver()
+    }
 
+    private fun observeBookmarkedMovies() {
+        viewModel.bookmarkedMovies.observe(viewLifecycleOwner) { movies ->
+            bookmarkedListAdapter.updateMoviesList(movies as ArrayList<Movie>)
+        }
     }
 
     private fun registerBroadcastReceiver() {
@@ -67,23 +71,6 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
     private fun unregisterBroadcastReceiver() {
         LocalBroadcastManager.getInstance(requireContext())
             .unregisterReceiver(bookmarkUpdateReceiver)
-    }
-
-    private fun getBookmarkedMovies(): ArrayList<Movie> {
-        val bookmarkedMovies = ArrayList<Movie>()
-        val bookmarkedMovieIds = sharedPreferences.getStringSet("bookmarkedMovies", emptySet())
-
-        if (bookmarkedMovieIds != null) {
-            for (movieId in bookmarkedMovieIds) {
-                val movie = MovieController.getMovieById(movieId.toInt())
-                movie?.let { bookmarkedMovies.add(it) }
-            }
-        }
-        return bookmarkedMovies
-    }
-
-    private fun displayBookmarkedMovies() {
-        bookmarkedListAdapter.updateMoviesList(getBookmarkedMovies())
     }
 
     override fun onItemClick(movie: Movie) {
@@ -97,6 +84,4 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
         super.onDestroyView()
         unregisterBroadcastReceiver()
     }
-
-
 }

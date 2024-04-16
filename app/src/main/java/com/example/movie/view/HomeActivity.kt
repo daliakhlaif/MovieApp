@@ -3,17 +3,21 @@ package com.example.movie.view
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.movie.R
 import com.example.movie.databinding.ActivityHomeBinding
+import com.example.movie.viewModel.HomeViewModel
 import com.google.android.material.navigation.NavigationBarView
+import com.google.android.material.navigation.NavigationBarView.LABEL_VISIBILITY_UNLABELED
 
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +29,13 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initialize(){
         setupBottomNavigationView()
-        replaceFragment(HomeFragment())
-        updateBottomNavColors(binding.bottomNavigationView.id)
+        viewModel.onHomeSelected()
+        viewModel.selectedFragment.observe(this) { fragment ->
+            fragment?.let {
+                replaceFragment(it)
+            }
+        }
+       updateBottomNavColors(binding.bottomNavigationView.id)
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -37,25 +46,19 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupBottomNavigationView() {
         binding.bottomNavigationView.apply {
-            labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED
-            setListenerForBottomNav()
-        }
-    }
-
-    private fun setListenerForBottomNav(){
-        binding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.menu_item2 -> {
-                    replaceFragment(BookmarkFragment())
-                    updateBottomNavColors(menuItem.itemId)
-                    true
+            labelVisibilityMode = LABEL_VISIBILITY_UNLABELED
+            setOnItemSelectedListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.menu_item2 -> {
+                        viewModel.onBookmarkSelected()
+                        true
+                    }
+                    R.id.menu_item1 -> {
+                        viewModel.onHomeSelected()
+                        true
+                    }
+                    else -> false
                 }
-                R.id.menu_item1 -> {
-                    replaceFragment(HomeFragment())
-                    updateBottomNavColors(menuItem.itemId)
-                    true
-                }
-                else -> false
             }
         }
     }

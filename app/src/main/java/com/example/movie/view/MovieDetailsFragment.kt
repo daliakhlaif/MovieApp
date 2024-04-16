@@ -10,72 +10,59 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.movie.R
-import com.example.movie.controller.MovieController
 import com.example.movie.databinding.FragmentMovieDetailsBinding
 import com.example.movie.model.Movie
+import com.example.movie.repository.MovieRepository
+import com.example.movie.util.getDurationString
 import com.example.movie.util.getParcelableExtraCompat
+import com.example.movie.util.removeHtmlTags
+import com.example.movie.viewModel.MovieDetailsViewModel
 
 
 class MovieDetailsFragment : Fragment() {
 
-    private lateinit var sharedPreferences: SharedPreferences
-    private var _binding: FragmentMovieDetailsBinding? = null
-    private lateinit var movie: Movie
-    private val binding get() = _binding!!
-    private val intent = Intent(BookmarkFragment.ACTION_BOOKMARK_UPDATED)
+    private lateinit var binding: FragmentMovieDetailsBinding
+    private lateinit var viewModel: MovieDetailsViewModel
+    private lateinit var context: Context
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMovieDetailsBinding.inflate(inflater, container, false)
+        binding = FragmentMovieDetailsBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        this.context = context
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initialize()
+        initializeViewModel()
     }
 
-
-    private fun initialize() {
-        sharedPreferences = requireContext().getSharedPreferences("BookmarkPrefs", Context.MODE_PRIVATE)
-
-        binding.bookmark.setOnClickListener {
-            toggleBookmark()
+    private fun initializeViewModel() {
+        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(requireActivity().application)).get(MovieDetailsViewModel::class.java)
+        arguments?.let { bundle ->
+            val movie = activity?.intent?.getParcelableExtraCompat("movie", Movie::class.java)
+            viewModel.init(movie)
         }
-
-        arguments?.let {
-            movie = getMovieFromIntent() ?: return
-            displayMovieDetails(movie)
-            updateBookmarkAppearance(isBookmarked())
-        }
-    }
-
-    private fun isBookmarked(): Boolean {
-        val bookmarkedMovies = sharedPreferences.getStringSet("bookmarkedMovies", emptySet())
-        return bookmarkedMovies?.contains(movie.movieId.toString()) ?: false
-    }
-
-    private fun toggleBookmark() {
-        val isBookmarked = isBookmarked()
-        val newBookmarkState = !isBookmarked
-        saveBookmarkState(newBookmarkState)
-        updateBookmarkAppearance(newBookmarkState)
-        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
-    }
-
-    private fun saveBookmarkState(bookmarkState: Boolean) {
-        val bookmarkedMovies = sharedPreferences.getStringSet("bookmarkedMovies", mutableSetOf())?.toMutableSet()
-        if (bookmarkState) {
-            bookmarkedMovies?.add(movie.movieId.toString())
-        } else {
-            bookmarkedMovies?.remove(movie.movieId.toString())
-        }
-        sharedPreferences.edit().putStringSet("bookmarkedMovies", bookmarkedMovies).apply()
+        viewModel.movie.observe(viewLifecycleOwner, Observer { movie ->
+            movie?.let {
+                displayMovieDetails(it)
+                updateBookmarkAppearance(viewModel.isBookmarked(context))
+                binding.bookmark.setOnClickListener {
+                    viewModel.toggleBookmark(context)
+                    updateBookmarkAppearance(viewModel.isBookmarked(context))
+                }
+            }
+        })
     }
 
     private fun updateBookmarkAppearance(isBookmarked: Boolean) {
@@ -83,18 +70,13 @@ class MovieDetailsFragment : Fragment() {
         binding.bookmark.setImageResource(drawableRes)
     }
 
-
-    private fun getMovieFromIntent(): Movie? {
-       return activity?.intent?.getParcelableExtraCompat("movie", Movie::class.java)
-    }
-
     private fun displayMovieDetails(movie: Movie) {
         binding.apply {
             movieName.text = movie.name
             rating.text = getString(R.string.outOfTen, movie.rating.average.toString())
             language.text = movie.language
-            length.text = MovieController.getDurationString(movie.duration)
-            description.text = MovieController.removeHtmlTags(movie.description)
+            length.text = getDurationString(movie.duration)
+            description.text = removeHtmlTags(movie.description)
             description.movementMethod = ScrollingMovementMethod()
             Glide.with(requireContext())
                 .load(movie.poster.original)
@@ -115,7 +97,6 @@ class MovieDetailsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 
     companion object {
