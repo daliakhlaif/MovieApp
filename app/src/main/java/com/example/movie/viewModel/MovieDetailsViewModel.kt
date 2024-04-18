@@ -2,22 +2,21 @@ package com.example.movie.viewModel
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.movie.repository.MovieDatabaseHelper
 import com.example.movie.model.Movie
 
 class MovieDetailsViewModel : ViewModel() {
     private val _movie = MutableLiveData<Movie?>()
     val movie: LiveData<Movie?> get() = _movie
-
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var movieDatabaseHelper: MovieDatabaseHelper
 
     fun isBookmarked(context: Context): Boolean {
-        sharedPreferences = context.getSharedPreferences("BookmarkPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getStringSet("bookmarkedMovies", emptySet())?.contains(_movie.value?.movieId.toString()) ?: false
+        movieDatabaseHelper = MovieDatabaseHelper(context)
+        return movieDatabaseHelper.getMovieIds().contains(_movie.value?.movieId)
     }
 
     fun toggleBookmark(context: Context) {
@@ -28,14 +27,11 @@ class MovieDetailsViewModel : ViewModel() {
     }
 
     private fun saveBookmarkState(context: Context, bookmarkState: Boolean) {
-        sharedPreferences = context.getSharedPreferences("BookmarkPrefs", Context.MODE_PRIVATE)
-        val bookmarkedMovies = sharedPreferences.getStringSet("bookmarkedMovies", mutableSetOf())?.toMutableSet()
         if (bookmarkState) {
-            bookmarkedMovies?.add(_movie.value?.movieId.toString())
+            _movie.value?.let { movieDatabaseHelper.addMovie(it.movieId) }
         } else {
-            bookmarkedMovies?.remove(_movie.value?.movieId.toString())
+            _movie.value?.let { movieDatabaseHelper.deleteMovie(it.movieId) }
         }
-        sharedPreferences.edit().putStringSet("bookmarkedMovies", bookmarkedMovies).apply()
     }
 
     private fun sendBookmarkUpdateBroadcast(context: Context) {

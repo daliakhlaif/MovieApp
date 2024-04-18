@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import com.example.movie.R
 import com.example.movie.databinding.ActivityHomeBinding
 import com.example.movie.viewModel.HomeViewModel
-import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationBarView.LABEL_VISIBILITY_UNLABELED
 
 
@@ -18,7 +17,6 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private val viewModel: HomeViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
@@ -35,7 +33,7 @@ class HomeActivity : AppCompatActivity() {
                 replaceFragment(it)
             }
         }
-       updateBottomNavColors(binding.bottomNavigationView.id)
+        updateBottomNavColors(binding.bottomNavigationView.id)
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -82,5 +80,3 @@ class HomeActivity : AppCompatActivity() {
 
 
 }
-
-

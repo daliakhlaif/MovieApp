@@ -68,4 +68,3 @@ class HomeFragment : Fragment(), OnMovieItemClickListener {
 
 
 }
-
