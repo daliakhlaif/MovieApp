@@ -1,23 +1,18 @@
 package com.example.movie.view
 
-
 import android.content.res.ColorStateList
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.movie.R
 import com.example.movie.databinding.ActivityHomeBinding
-import com.example.movie.viewModel.HomeViewModel
 import com.google.android.material.navigation.NavigationBarView
-import com.google.android.material.navigation.NavigationBarView.LABEL_VISIBILITY_UNLABELED
 
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
-    private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,24 +34,33 @@ class HomeActivity : AppCompatActivity() {
             .commit()
     }
 
+    private fun showFragment(fragmentTag: String, fragmentFactory: () -> Fragment): Boolean {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val existingFragment = supportFragmentManager.findFragmentByTag(fragmentTag)
+        if (existingFragment != null) {
+            fragmentTransaction.show(existingFragment)
+        } else {
+            fragmentTransaction.replace(binding.frameLayout.id, fragmentFactory(), fragmentTag)
+        }
+        fragmentTransaction.commit()
+        return true
+    }
+
+
     private fun setupBottomNavigationView() {
         binding.bottomNavigationView.apply {
-            labelVisibilityMode = LABEL_VISIBILITY_UNLABELED
+            labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED
             setOnItemSelectedListener { menuItem ->
-                when (menuItem.itemId) {
-                    R.id.menu_item2 -> {
-                        replaceFragment(BookmarkFragment())
-                        true
-                    }
-                    R.id.menu_item1 -> {
-                        replaceFragment(HomeFragment())
-                        true
-                    }
+                val transactionSuccess = when (menuItem.itemId) {
+                    R.id.menu_item2 -> showFragment(BookmarkFragment::class.java.simpleName) { BookmarkFragment() }
+                    R.id.menu_item1 -> showFragment(HomeFragment::class.java.simpleName) { HomeFragment() }
                     else -> false
                 }
+                transactionSuccess
             }
         }
     }
+
 
 
     private fun updateBottomNavColors(selectedItemId: Int) {
