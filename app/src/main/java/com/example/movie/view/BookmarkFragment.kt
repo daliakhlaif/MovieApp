@@ -58,6 +58,7 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
         binding.recycler.layoutManager = LinearLayoutManager(requireContext())
         bookmarkedListAdapter = BookmarkedListAdapter(requireContext(), ArrayList(), this)
         binding.recycler.adapter = bookmarkedListAdapter
+        viewModel.fetchBookmarkedMovies()
         observeBookmarkedMovies()
         registerBroadcastReceiver()
     }
@@ -73,6 +74,10 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
             .registerReceiver(bookmarkUpdateReceiver, IntentFilter(ACTION_BOOKMARK_UPDATED))
     }
 
+    private fun unregisterBroadcastReceiver() {
+        LocalBroadcastManager.getInstance(requireContext())
+            .unregisterReceiver(bookmarkUpdateReceiver)
+    }
 
     override fun onItemClick(movie: Movie) {
         val intent = Intent(context, MovieDetailsActivity::class.java).apply {
@@ -81,5 +86,8 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
         startActivity(intent)
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        unregisterBroadcastReceiver()
+    }
 }
