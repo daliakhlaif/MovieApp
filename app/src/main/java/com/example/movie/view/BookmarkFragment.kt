@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +33,9 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
     private val bookmarkUpdateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == ACTION_BOOKMARK_UPDATED) {
+
                 viewModel.fetchBookmarkedMovies()
+                Log.i("check broadcast", "from receiver")
             }
         }
     }
@@ -48,13 +51,14 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialize()
-        observeBookmarkedMovies()
+
     }
 
     private fun initialize() {
         binding.recycler.layoutManager = LinearLayoutManager(requireContext())
         bookmarkedListAdapter = BookmarkedListAdapter(requireContext(), ArrayList(), this)
         binding.recycler.adapter = bookmarkedListAdapter
+        observeBookmarkedMovies()
         registerBroadcastReceiver()
     }
 
@@ -81,8 +85,5 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
         startActivity(intent)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        unregisterBroadcastReceiver()
-    }
+
 }

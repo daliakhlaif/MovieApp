@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.movie.model.Movie
-import com.example.movie.repository.MovieRepository
 import com.example.movie.util.GlobalKeys
 import com.example.movie.util.getMovieById
 

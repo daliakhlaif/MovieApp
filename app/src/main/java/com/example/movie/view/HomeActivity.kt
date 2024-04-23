@@ -13,6 +13,8 @@ import com.google.android.material.navigation.NavigationBarView
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
+    private var homeFragment = HomeFragment()
+    private var bookmarkFragment = BookmarkFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,8 +26,8 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initialize(){
         setupBottomNavigationView()
-        replaceFragment(HomeFragment())
-       updateBottomNavColors(binding.bottomNavigationView.id)
+        replaceFragment(homeFragment)
+        updateBottomNavColors(binding.bottomNavigationView.id)
     }
 
     private fun replaceFragment(fragment: Fragment) {
@@ -34,26 +36,20 @@ class HomeActivity : AppCompatActivity() {
             .commit()
     }
 
-    private fun showFragment(fragmentTag: String, fragmentFactory: () -> Fragment): Boolean {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val existingFragment = supportFragmentManager.findFragmentByTag(fragmentTag)
-        if (existingFragment != null) {
-            fragmentTransaction.show(existingFragment)
-        } else {
-            fragmentTransaction.replace(binding.frameLayout.id, fragmentFactory(), fragmentTag)
-        }
-        fragmentTransaction.commit()
-        return true
-    }
-
 
     private fun setupBottomNavigationView() {
         binding.bottomNavigationView.apply {
             labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_UNLABELED
             setOnItemSelectedListener { menuItem ->
                 val transactionSuccess = when (menuItem.itemId) {
-                    R.id.menu_item2 -> showFragment(BookmarkFragment::class.java.simpleName) { BookmarkFragment() }
-                    R.id.menu_item1 -> showFragment(HomeFragment::class.java.simpleName) { HomeFragment() }
+                    R.id.menu_item2 -> {
+                       replaceFragment(bookmarkFragment)
+                        true
+                    }
+                    R.id.menu_item1 -> {
+                        replaceFragment(homeFragment)
+                        true
+                    }
                     else -> false
                 }
                 transactionSuccess
