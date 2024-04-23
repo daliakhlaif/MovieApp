@@ -73,10 +73,6 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
             .registerReceiver(bookmarkUpdateReceiver, IntentFilter(ACTION_BOOKMARK_UPDATED))
     }
 
-    private fun unregisterBroadcastReceiver() {
-        LocalBroadcastManager.getInstance(requireContext())
-            .unregisterReceiver(bookmarkUpdateReceiver)
-    }
 
     override fun onItemClick(movie: Movie) {
         val intent = Intent(context, MovieDetailsActivity::class.java).apply {
