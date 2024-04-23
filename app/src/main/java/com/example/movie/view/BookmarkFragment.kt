@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie.adapter.BookmarkedListAdapter
 import com.example.movie.databinding.FragmentBookmarkBinding
 import com.example.movie.model.Movie
+import com.example.movie.util.GlobalKeys
 import com.example.movie.viewModel.BookmarkViewModel
 import com.example.movie.viewModel.BookmarkViewModelFactory
 
@@ -75,7 +76,7 @@ class BookmarkFragment : Fragment(), OnMovieItemClickListener {
 
     override fun onItemClick(movie: Movie) {
         val intent = Intent(context, MovieDetailsActivity::class.java).apply {
-            putExtra("movie", movie)
+            putExtra(GlobalKeys.ARG_MOVIE, movie)
         }
         startActivity(intent)
     }

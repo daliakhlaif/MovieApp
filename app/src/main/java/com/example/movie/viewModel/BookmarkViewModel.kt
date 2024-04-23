@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.movie.model.Movie
 import com.example.movie.repository.MovieRepository
+import com.example.movie.util.GlobalKeys
 import com.example.movie.util.getMovieById
 
 class BookmarkViewModel(private val context: Context) : ViewModel() {
@@ -32,7 +33,7 @@ class BookmarkViewModel(private val context: Context) : ViewModel() {
     }
 
     private fun getBookmarkedMovieIds(): Set<String>? {
-        val sharedPreferences = context.getSharedPreferences("BookmarkPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getStringSet("bookmarkedMovies", emptySet())
+        val sharedPreferences = context.getSharedPreferences(GlobalKeys.BOOKMARK_PREFS_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getStringSet(GlobalKeys.BOOKMARKED_MOVIES, emptySet())
     }
 }

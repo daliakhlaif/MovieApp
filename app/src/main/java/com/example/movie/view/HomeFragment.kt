@@ -7,11 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie.adapter.MovieListAdapter
 import com.example.movie.databinding.FragmentHomeBinding
 import com.example.movie.model.Movie
+import com.example.movie.util.GlobalKeys
 import com.example.movie.viewModel.HomeViewModel
 
 class HomeFragment : Fragment(), OnMovieItemClickListener {
@@ -19,8 +21,8 @@ class HomeFragment : Fragment(), OnMovieItemClickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: HomeViewModel
     private lateinit var movieListAdapter: MovieListAdapter
+    private val viewModel: HomeViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -33,7 +35,7 @@ class HomeFragment : Fragment(), OnMovieItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+
         initialize()
     }
 
@@ -44,10 +46,9 @@ class HomeFragment : Fragment(), OnMovieItemClickListener {
     }
 
 
-
     override fun onItemClick(movie: Movie){
         val intent = Intent(context, MovieDetailsActivity::class.java).apply {
-            putExtra("movie", movie)
+            putExtra(GlobalKeys.ARG_MOVIE, movie)
         }
         startActivity(intent)
     }

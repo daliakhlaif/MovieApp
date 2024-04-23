@@ -8,6 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.movie.model.Movie
+import com.example.movie.util.GlobalKeys
+import com.example.movie.view.BookmarkFragment
 
 class MovieDetailsViewModel : ViewModel() {
     private val _movie = MutableLiveData<Movie?>()
@@ -16,8 +18,8 @@ class MovieDetailsViewModel : ViewModel() {
     private lateinit var sharedPreferences: SharedPreferences
 
     fun isBookmarked(context: Context): Boolean {
-        sharedPreferences = context.getSharedPreferences("BookmarkPrefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getStringSet("bookmarkedMovies", emptySet())?.contains(_movie.value?.movieId.toString()) ?: false
+        sharedPreferences = context.getSharedPreferences(GlobalKeys.BOOKMARK_PREFS_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getStringSet(GlobalKeys.BOOKMARKED_MOVIES, emptySet())?.contains(_movie.value?.movieId.toString()) ?: false
     }
 
     fun toggleBookmark(context: Context) {
@@ -28,18 +30,18 @@ class MovieDetailsViewModel : ViewModel() {
     }
 
     private fun saveBookmarkState(context: Context, bookmarkState: Boolean) {
-        sharedPreferences = context.getSharedPreferences("BookmarkPrefs", Context.MODE_PRIVATE)
-        val bookmarkedMovies = sharedPreferences.getStringSet("bookmarkedMovies", mutableSetOf())?.toMutableSet()
+        sharedPreferences = context.getSharedPreferences(GlobalKeys.BOOKMARK_PREFS_NAME, Context.MODE_PRIVATE)
+        val bookmarkedMovies = sharedPreferences.getStringSet(GlobalKeys.BOOKMARKED_MOVIES, mutableSetOf())?.toMutableSet()
         if (bookmarkState) {
             bookmarkedMovies?.add(_movie.value?.movieId.toString())
         } else {
             bookmarkedMovies?.remove(_movie.value?.movieId.toString())
         }
-        sharedPreferences.edit().putStringSet("bookmarkedMovies", bookmarkedMovies).apply()
+        sharedPreferences.edit().putStringSet(GlobalKeys.BOOKMARKED_MOVIES, bookmarkedMovies).apply()
     }
 
     private fun sendBookmarkUpdateBroadcast(context: Context) {
-        val intent = Intent("com.example.movie.BOOKMARK_UPDATED")
+        val intent = Intent(BookmarkFragment.ACTION_BOOKMARK_UPDATED)
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
     }
 

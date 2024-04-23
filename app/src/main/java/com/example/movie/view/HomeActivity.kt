@@ -29,12 +29,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initialize(){
         setupBottomNavigationView()
-        viewModel.onHomeSelected()
-        viewModel.selectedFragment.observe(this) { fragment ->
-            fragment?.let {
-                replaceFragment(it)
-            }
-        }
+        replaceFragment(HomeFragment())
        updateBottomNavColors(binding.bottomNavigationView.id)
     }
 
@@ -50,11 +45,11 @@ class HomeActivity : AppCompatActivity() {
             setOnItemSelectedListener { menuItem ->
                 when (menuItem.itemId) {
                     R.id.menu_item2 -> {
-                        viewModel.onBookmarkSelected()
+                        replaceFragment(BookmarkFragment())
                         true
                     }
                     R.id.menu_item1 -> {
-                        viewModel.onHomeSelected()
+                        replaceFragment(HomeFragment())
                         true
                     }
                     else -> false

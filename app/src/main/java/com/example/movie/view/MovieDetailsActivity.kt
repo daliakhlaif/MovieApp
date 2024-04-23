@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.movie.databinding.ActivityMovieDetailsBinding
 import com.example.movie.model.Movie
+import com.example.movie.util.GlobalKeys
 import com.example.movie.util.getParcelableExtraCompat
 import com.example.movie.viewModel.MovieDetailsViewModel
 
@@ -22,7 +23,7 @@ class MovieDetailsActivity : AppCompatActivity() {
     }
 
     private fun initialize() {
-        val movie = intent.getParcelableExtraCompat<Movie>("movie", Movie::class.java)
+        val movie = intent.getParcelableExtraCompat<Movie>(GlobalKeys.ARG_MOVIE, Movie::class.java)
         viewModel.init(movie)
         observeMovieDetails()
     }

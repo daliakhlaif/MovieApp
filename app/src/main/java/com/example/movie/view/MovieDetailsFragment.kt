@@ -1,8 +1,6 @@
 package com.example.movie.view
 
 import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
@@ -10,13 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.movie.R
 import com.example.movie.databinding.FragmentMovieDetailsBinding
 import com.example.movie.model.Movie
-import com.example.movie.repository.MovieRepository
+import com.example.movie.util.GlobalKeys
 import com.example.movie.util.getDurationString
 import com.example.movie.util.getParcelableExtraCompat
 import com.example.movie.util.removeHtmlTags
@@ -24,16 +22,16 @@ import com.example.movie.viewModel.MovieDetailsViewModel
 
 
 class MovieDetailsFragment : Fragment() {
-
-    private lateinit var binding: FragmentMovieDetailsBinding
-    private lateinit var viewModel: MovieDetailsViewModel
+    private var _binding: FragmentMovieDetailsBinding? = null
+    private val binding get() = _binding!!
     private lateinit var context: Context
+    private val viewModel: MovieDetailsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMovieDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentMovieDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -48,9 +46,9 @@ class MovieDetailsFragment : Fragment() {
     }
 
     private fun initializeViewModel() {
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(requireActivity().application)).get(MovieDetailsViewModel::class.java)
+
         arguments?.let { bundle ->
-            val movie = activity?.intent?.getParcelableExtraCompat("movie", Movie::class.java)
+            val movie = activity?.intent?.getParcelableExtraCompat(GlobalKeys.ARG_MOVIE, Movie::class.java)
             viewModel.init(movie)
         }
         viewModel.movie.observe(viewLifecycleOwner, Observer { movie ->
@@ -97,15 +95,15 @@ class MovieDetailsFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
     }
 
     companion object {
-        private const val ARG_MOVIE = "movie"
 
         fun newInstance(movie: Movie): MovieDetailsFragment {
             return MovieDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ARG_MOVIE, movie)
+                    putParcelable(GlobalKeys.ARG_MOVIE, movie)
                 }
             }
         }
